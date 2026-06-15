@@ -64,7 +64,7 @@ export default function DuplicateModal({ isOpen, existingBook, newBook, onClose 
             className="w-full py-2 px-4 rounded-lg font-medium text-white"
             style={{ backgroundColor: themeConfig.accent }}
           >
-            覆盖（保留阅读进度，更新内容
+            覆盖（保留阅读进度，更新内容）
           </button>
           <button
             onClick={handleAddNew}

@@ -84,6 +84,9 @@ export const useBookStore = create<BookStore>((set, get) => ({
     set({ loading: true, error: null });
     try {
       const result = await processImport(file.name, file);
+      if (result.success && result.book && !result.duplicate) {
+        set((state) => ({ books: [result.book!, ...state.books] }));
+      }
       set({ loading: false, importResult: result });
       return result;
     } catch (error) {
@@ -98,6 +101,9 @@ export const useBookStore = create<BookStore>((set, get) => ({
     try {
       const fileName = url.split('/').pop() || url;
       const result = await processImport(fileName, null, url);
+      if (result.success && result.book && !result.duplicate) {
+        set((state) => ({ books: [result.book!, ...state.books] }));
+      }
       set({ loading: false, importResult: result });
       return result;
     } catch (error) {
@@ -166,19 +172,10 @@ async function processImport(
 
   const phash = await computeTextPHash(fullText);
   const existingBook = await bookDB.getByPhash(phash);
-
-  if (existingBook) {
-    return {
-      success: true,
-      duplicate: true,
-      existingBook,
-    };
-  }
-
   const summary = generateSummary(chapters);
   const now = Date.now();
 
-  const book: Book = {
+  const newBook: Book = {
     id: generateId(),
     title,
     author,
@@ -197,10 +194,19 @@ async function processImport(
     updatedAt: now,
   };
 
-  await bookDB.add(book);
+  if (existingBook) {
+    return {
+      success: true,
+      duplicate: true,
+      existingBook,
+      book: newBook,
+    };
+  }
+
+  await bookDB.add(newBook);
 
   return {
     success: true,
-    book,
+    book: newBook,
   };
 }

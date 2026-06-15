@@ -1,7 +1,7 @@
 import JSZip from 'jszip';
 import type { Chapter, BookType } from '../types';
 
-const CHAPTER_REGEX = /^(第[\s]*[一二三四五六七八九十百千零〇壹贰叁肆伍陆柒捌玖拾\d]+[\s]*[章节回卷篇]|Chapter[\s]*\d+|CHAPTER[\s]*\d+|第[\s]*\d+[\s]*[章节回卷篇])/im;
+const CHAPTER_REGEX = /^(第[\s]*[一二三四五六七八九十百千零〇壹贰叁肆伍陆柒捌玖拾\d]+[\s]*[章节回卷篇]|Chapter[\s]*\d+|CHAPTER[\s]*\d+|第[\s]*\d+[\s]*[章节回卷篇])([\s:：]|$)/m;
 
 export function detectFileType(fileName: string): BookType | 'pdf' | 'unknown' {
   const ext = fileName.split('.').pop()?.toLowerCase();
